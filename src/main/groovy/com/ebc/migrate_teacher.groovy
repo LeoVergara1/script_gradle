@@ -24,26 +24,29 @@ driver: "oracle.jdbc.driver.OracleDriver"
 
 def sql = Sql.newInstance(dataSource_banis.url, dataSource_banis.user, dataSource_banis.password, dataSource_banis.driver)
 
-List docentes = []
-sql.eachRow('SELECT * FROM horaprof.DOCENTE') { row ->
-  docentes << [id: row.id, id_docente: row.ID_DOCENTE, primer_nombre: row.PRIMER_NOMBRE, apellidos: row.APELLIDOS, segundo_nombre: row.SEGUNDO_NOMBRE, pdim: row.PIDM]
+def pass_docentes_to_teacher(){
+  List docentes = []
+  sql.eachRow('SELECT * FROM horaprof.DOCENTE') { row ->
+    docentes << [id: row.id, id_docente: row.ID_DOCENTE, primer_nombre: row.PRIMER_NOMBRE, apellidos: row.APELLIDOS, segundo_nombre: row.SEGUNDO_NOMBRE, pdim: row.PIDM]
+  }
+
+  docentes.each{ row ->
+    str_string = """
+    INSERT INTO NOMINA.PRN_TEACHER_PROFILE (ID, ID_DOCENTE, PRIMER_NOMBRE, APELLIDOS, SEGUNDO_NOMBRE, PIDM, DATE_CREATED, LAST_UPDATED)
+    VALUES (
+      ?.id,
+      ?.id_docente,
+      ?.primer_nombre,
+      ?.apellidos,
+      ?.segundo_nombre,
+      ?.pdim,
+      sysdate,
+      sysdate
+      )
+    """
+    sql.executeInsert(str_string, row)
+  }
 }
 
-docentes.each{ row ->
-  str_string = """
-  INSERT INTO NOMINA.PRN_TEACHER_PROFILE (ID, ID_DOCENTE, PRIMER_NOMBRE, APELLIDOS, SEGUNDO_NOMBRE, PIDM, DATE_CREATED, LAST_UPDATED)
-  VALUES (
-    ?.id,
-    ?.id_docente,
-    ?.primer_nombre,
-    ?.apellidos,
-    ?.segundo_nombre,
-    ?.pdim,
-    sysdate,
-    sysdate
-    )
-  """
-  sql.executeInsert(str_string, row)
-}
-
+println "HOla mundo"
 
