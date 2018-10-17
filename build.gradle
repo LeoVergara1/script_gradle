@@ -1,0 +1,25 @@
+apply plugin: 'groovy'
+repositories {
+    jcenter()
+    maven {
+        url "https://maven.springframework.org/release"
+    }
+    maven {
+        url "http://www.datanucleus.org/downloads/maven2/"
+    }
+
+}
+dependencies {
+    compile localGroovy()
+    compile group: 'oracle', name: 'ojdbc6', version: '11.2.0.3'
+}
+
+task runScript(type: JavaExec) {
+    description 'Run Groovy script'
+
+    // Set main property to name of Groovy script class.
+    main = 'com.ebc.migrate_teacher'
+
+    // Set classpath for running the Groovy script.
+    classpath = sourceSets.main.runtimeClasspath
+}
