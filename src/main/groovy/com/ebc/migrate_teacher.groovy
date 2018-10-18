@@ -48,5 +48,56 @@ def pass_docentes_to_teacher(){
   }
 }
 
-println "HOla mundo"
+def pass_cuotas_to_nomina(Sql sql) {
+  List cuotas = []
+  sql.eachRow('SELECT * FROM horaprof.CUOTA where id = 1532') { row ->
+    cuotas << [id: row.id, id_empresa: row.ID_EMPRESA, id_nivel: row.ID_NIVEL, id_campus: row.ID_CAMPUS, id_horario: row.ID_HORARIO,
+    cuota: row.CUOTA, fecha_ingreso: row.FECHA_INGRESO, fecha_alta: row.FECHA_ALTA, fecha_prenomina: row.FECHA_PRENOMINA,
+    estatus_cuota: row.ESTATUS_CUOTA, estatus_docente: row.ESTATUS_DOCENTE, fecha_estatus_docente: row.FECHA_ESTATUS_DOCENTE,
+    usuario: row.USUARIO, id_docente: row.ID_DOCENTE, empresa: row.EMPRESA, id_forma_de_pago: row.ID_FORMA_DE_PAGO, forma_de_pago: row.FORMA_DE_PAGO,
+    nivel: row.NIVEL, campus: row.CAMPUS, horario: row.HORARIO, justificacion: row.JUSTIFICACION]
+  }
+  println cuotas[0].justificacion ? "SI" : null
 
+  row = cuotas[0]
+  println row
+//  cuotas.each(){ row ->
+  str_string = """
+  INSERT INTO NOMINA.CUOTA (ID, ID_EMPRESA, ID_NIVEL, ID_CAMPUS, ID_HORARIO, CUOTA, FECHA_INGRESO, FECHA_ALTA, FECHA_PRENOMINA,
+  ESTATUS_CUOTA, ESTATUS_DOCENTE, FECHA_ESTATUS_DOCENTE, USUARIO, ID_DOCENTE, DATE_CREATED, LAST_UPDATED, EMPRESA, ID_FORMA_DE_PAGO,
+  FORMA_DE_PAGO, NIVEL, CAMPUS, HORARIO, JUSTIFICACION)
+  VALUES (
+    ${row.id},
+    ${row.id_empresa},
+    ${row.id_nivel},
+    ${row.id_campus},
+    ${row.id_horario},
+    ${row.cuota},
+    ${valid_date(row.fecha_ingreso)},
+    ${valid_date(row.fecha_alta)},
+    ${valid_date(row.fecha_prenomina)},
+    ${row.estatus_cuota},
+    ${row.estatus_docente},
+    ${valid_date(row.fecha_estatus_docente)},
+    ${row.usuario},
+    ${row.id_docente},
+    sysdate,
+    sysdate,
+    ${row.empresa},
+    ${row.id_forma_de_pago},
+    ${row.forma_de_pago},
+    ${row.nivel},
+    ${row.campus},
+    ${row.horario},
+    ${row.justificacion}
+    )
+  """
+  def otro = ""
+  sql.execute(str_string)
+//  }
+}
+def valid_date(date){
+  date ? date : null
+}
+println "HOla mundo"
+pass_cuotas_to_nomina(sql)
